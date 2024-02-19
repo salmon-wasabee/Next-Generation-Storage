@@ -1,58 +1,30 @@
+#include <AccelStepper.h>
+
+// Define stepper motor connections:
 #define dirPin 12
 #define stepPin 13
-#define stepsPerRevolution 1600 // Full revolution steps
+
+// Define the AccelStepper interface type; 1 is for driver.
+AccelStepper stepper(1, stepPin, dirPin);
 
 void setup() {
   Serial.begin(9600); // Start serial communication at 9600 baud rate
-  pinMode(stepPin, OUTPUT);
-  pinMode(dirPin, OUTPUT);
+  
+  // Set the maximum speed and acceleration:
+  stepper.setMaxSpeed(6400); // Adjust to your motor's specifications
+  stepper.setAcceleration(2100); // Adjust to your desired acceleration
 }
 
 void loop() {
   if (Serial.available() > 0) {
     String input = Serial.readStringUntil('\n');
     if (input == "CW") { // Clockwise rotation
-      digitalWrite(dirPin, HIGH);
-      rotateMotorHalfRevolution();
+      stepper.move(6400); // Adjusted for 32 microsteps (half a revolution)
     } else if (input == "CCW") { // Counter-clockwise rotation
-      digitalWrite(dirPin, LOW);
-      rotateMotorHalfRevolution();
+      stepper.move(-6400); // Adjusted for 32 microsteps (half a revolution)
     }
   }
-}
 
-void rotateMotorHalfRevolution() {
-  int halfSteps = stepsPerRevolution / 2;
-  int accelerationSteps = halfSteps * 0.2; // 20% of steps for acceleration and deceleration
-  int maxSpeedDelay = 100; // microseconds for fastest step speed
-  int startSpeedDelay = 1000; // microseconds for starting step speed
-  int speedDelay = startSpeedDelay;
-
-  // Accelerate
-  for (int i = 0; i < accelerationSteps; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(speedDelay);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(speedDelay);
-    // Decrease delay to accelerate
-    speedDelay -= (startSpeedDelay - maxSpeedDelay) / accelerationSteps;
-  }
-
-  // Constant speed
-  for (int i = accelerationSteps; i < halfSteps - accelerationSteps; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(maxSpeedDelay);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(maxSpeedDelay);
-  }
-
-  // Decelerate
-  for (int i = halfSteps - accelerationSteps; i < halfSteps; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(speedDelay);
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(speedDelay);
-    // Increase delay to decelerate
-    speedDelay += (startSpeedDelay - maxSpeedDelay) / accelerationSteps;
-  }
+  // Perform the steps that have been set by the move() calls above
+  stepper.run();
 }
