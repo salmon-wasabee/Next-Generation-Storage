@@ -1,0 +1,58 @@
+#define dirPin 12
+#define stepPin 13
+#define stepsPerRevolution 1600 // Full revolution steps
+
+void setup() {
+  Serial.begin(9600); // Start serial communication at 9600 baud rate
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW") { // Clockwise rotation
+      digitalWrite(dirPin, HIGH);
+      rotateMotorHalfRevolution();
+    } else if (input == "CCW") { // Counter-clockwise rotation
+      digitalWrite(dirPin, LOW);
+      rotateMotorHalfRevolution();
+    }
+  }
+}
+
+void rotateMotorHalfRevolution() {
+  int halfSteps = stepsPerRevolution / 2;
+  int accelerationSteps = halfSteps * 0.2; // 20% of steps for acceleration and deceleration
+  int maxSpeedDelay = 100; // microseconds for fastest step speed
+  int startSpeedDelay = 1000; // microseconds for starting step speed
+  int speedDelay = startSpeedDelay;
+
+  // Accelerate
+  for (int i = 0; i < accelerationSteps; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(speedDelay);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(speedDelay);
+    // Decrease delay to accelerate
+    speedDelay -= (startSpeedDelay - maxSpeedDelay) / accelerationSteps;
+  }
+
+  // Constant speed
+  for (int i = accelerationSteps; i < halfSteps - accelerationSteps; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(maxSpeedDelay);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(maxSpeedDelay);
+  }
+
+  // Decelerate
+  for (int i = halfSteps - accelerationSteps; i < halfSteps; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(speedDelay);
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(speedDelay);
+    // Increase delay to decelerate
+    speedDelay += (startSpeedDelay - maxSpeedDelay) / accelerationSteps;
+  }
+}

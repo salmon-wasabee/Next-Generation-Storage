@@ -1,6 +1,6 @@
 #define dirPin 12
 #define stepPin 13
-#define stepsPerRevolution 1600
+#define stepsPerRevolution 1600 // Full revolution steps
 
 void setup() {
   Serial.begin(9600); // Start serial communication at 9600 baud rate
@@ -13,19 +13,21 @@ void loop() {
     String input = Serial.readStringUntil('\n');
     if (input == "CW") { // Clockwise rotation
       digitalWrite(dirPin, HIGH);
-      rotateMotor();
+      rotateMotorHalfRevolution();
     } else if (input == "CCW") { // Counter-clockwise rotation
       digitalWrite(dirPin, LOW);
-      rotateMotor();
+      rotateMotorHalfRevolution();
     }
   }
 }
 
-void rotateMotor() {
-  for (int i = 0; i < stepsPerRevolution; i++) {
+void rotateMotorHalfRevolution() {
+  // Calculate half the steps for a full revolution
+  int halfSteps = stepsPerRevolution / 2;
+  for (int i = 0; i < halfSteps; i++) {
     digitalWrite(stepPin, HIGH);
-    delayMicroseconds(100); // Adjust for speed
+    delayMicroseconds(200); // Adjust for speed
     digitalWrite(stepPin, LOW);
-    delayMicroseconds(100); // Adjust for speed
+    delayMicroseconds(200); // Adjust for speed
   }
 }
