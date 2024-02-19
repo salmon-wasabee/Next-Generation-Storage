@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Encoding=UTF-8
+Name=start_rpi
+Comment=Control stepper motors via Arduino
+Exec=/home/capstone15/Desktop/Next-Generation-Storage-master/Raspberry_Pi_4B/main.py
+Icon=application-python
+Terminal=true
