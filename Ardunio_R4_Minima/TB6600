@@ -1,27 +1,31 @@
-/* Example sketch to control a stepper motor with TB6600 stepper motor driver 
-   and Arduino without a library: number of revolutions, speed, and direction. 
-   Adapted for DIR+ on pin 12 and PUL+ on pin 13. 
-   More info: https://www.makerguides.com */
-
-// Define stepper motor connections and steps per revolution:
 #define dirPin 12
 #define stepPin 13
 #define stepsPerRevolution 1600
 
 void setup() {
-  // Declare pins as output:
+  Serial.begin(9600); // Start serial communication at 9600 baud rate
   pinMode(stepPin, OUTPUT);
   pinMode(dirPin, OUTPUT);
 }
 
 void loop() {
-  digitalWrite(dirPin, HIGH); // Set direction clockwise
-  for (int i = 0; i < stepsPerRevolution; i++) {
-    digitalWrite(stepPin, HIGH);
-    delayMicroseconds(100); // Adjust based on your setup's capabilities
-    digitalWrite(stepPin, LOW);
-    delayMicroseconds(100); // Adjust based on your setup's capabilities
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW") { // Clockwise rotation
+      digitalWrite(dirPin, HIGH);
+      rotateMotor();
+    } else if (input == "CCW") { // Counter-clockwise rotation
+      digitalWrite(dirPin, LOW);
+      rotateMotor();
+    }
   }
-  // No additional delay needed here unless you want a pause between movements
 }
 
+void rotateMotor() {
+  for (int i = 0; i < stepsPerRevolution; i++) {
+    digitalWrite(stepPin, HIGH);
+    delayMicroseconds(100); // Adjust for speed
+    digitalWrite(stepPin, LOW);
+    delayMicroseconds(100); // Adjust for speed
+  }
+}
