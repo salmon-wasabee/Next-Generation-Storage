@@ -15,10 +15,14 @@ except serial.SerialException:
     print("Serial port not available")
     exit()
 
+# Create the root window first
+root = tk.Tk()
+
+# Now it's safe to create Tkinter variables
 status_label_text_var = tk.StringVar(value="Send CW for forward, CCW for backward")
 
 # Create UI
-root = create_ui(ser, move_forward, move_backward, status_label_text_var)
+create_ui(ser, move_forward, move_backward, status_label_text_var)
 
 # Run the main event loop
 root.mainloop()
