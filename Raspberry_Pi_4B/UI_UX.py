@@ -8,8 +8,10 @@ BAUD_RATE = 9600
 
 # Function to send command to Arduino
 def send_command(command):
-    ser.write(command.encode())
+    command_with_newline = command + '\n'  # Append newline character
+    ser.write(command_with_newline.encode())
     status_label.config(text=f"Command sent: {command}")
+
 
 # Function to move stepper motor forward (clockwise)
 def move_forward():
