@@ -1,0 +1,38 @@
+#include <AccelStepper.h>
+
+// Define stepper motor connections:
+#define dirPin 12
+#define stepPin 13
+#define enablePin 11 // Define the pin used for the ENABLE function
+
+// Define the AccelStepper interface type; 1 is for driver.
+AccelStepper stepper(1, stepPin, dirPin);
+
+void setup() {
+  Serial.begin(9600); // Start serial communication at 9600 baud rate
+  
+  pinMode(enablePin, OUTPUT); // Set the enable pin as an output
+  digitalWrite(enablePin, LOW); // Enable the driver (active LOW or HIGH depending on your driver's requirements)
+
+  // Set the maximum speed and acceleration:
+  stepper.setMaxSpeed(6400); // Adjust to your motor's specifications
+  stepper.setAcceleration(2100); // Adjust to your desired acceleration
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW") { // Clockwise rotation
+      digitalWrite(enablePin, LOW); // Ensure the driver is enabled
+      stepper.move(6400); // Adjusted for 32 microsteps (half a revolution)
+    } else if (input == "CCW") { // Counter-clockwise rotation
+      digitalWrite(enablePin, LOW); // Ensure the driver is enabled
+      stepper.move(-6400); // Adjusted for 32 microsteps (half a revolution)
+    } else if (input == "STOP") { // Example command to disable the motor
+      digitalWrite(enablePin, HIGH); // Disable the driver (if active LOW, otherwise set to LOW to disable)
+    }
+  }
+
+  // Perform the steps that have been set by the move() calls above
+  stepper.run();
+}
