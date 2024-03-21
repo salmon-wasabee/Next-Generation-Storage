@@ -22,23 +22,23 @@ def send_command(command):
 
 # Function to move stepper motors in the UP direction
 def move_up():
-    send_command("CW")
-    send_command("CCW")
+    send_command("CW1")
+    send_command("CCW2")
 
 # Function to move stepper motors in the DOWN direction
 def move_down():
-    send_command("CCW")
-    send_command("CW")
+    send_command("CCW1")
+    send_command("CW2")
 
 # Function to move stepper motors in the LEFT direction
 def move_left():
-    send_command("CW")
-    send_command("CW")
+    send_command("CW1")
+    send_command("CW2")
 
 # Function to move stepper motors in the RIGHT direction
 def move_right():
-    send_command("CCW")
-    send_command("CCW")
+    send_command("CCW1")
+    send_command("CCW2")
 
 # Function to stop stepper motors
 def stop_motors():
