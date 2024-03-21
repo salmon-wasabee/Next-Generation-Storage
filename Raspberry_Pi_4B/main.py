@@ -14,14 +14,20 @@ def send_command(command):
     ser.write(command_with_newline.encode())
     status_label.config(text=f"Command sent: {command}")
 
-
-# Function to move stepper motor forward (clockwise)
+# Function to move stepper motors forward (clockwise)
 def move_forward():
-    send_command("CW")
+    send_command("CW1")  # Command for the first motor
+    send_command("CW2")  # Command for the second motor
 
-# Function to move stepper motor backward (counter-clockwise)
+# Function to move stepper motors backward (counter-clockwise)
 def move_backward():
-    send_command("CCW")
+    send_command("CCW1")  # Command for the first motor
+    send_command("CCW2")  # Command for the second motor
+
+# Function to stop stepper motors
+def stop_motors():
+    send_command("STOP1")  # Command to stop the first motor
+    send_command("STOP2")  # Command to stop the second motor
 
 # Initialize serial connection
 try:
@@ -32,7 +38,7 @@ except serial.SerialException:
 
 # Create main window
 root = tk.Tk()
-root.title("Stepper Motor Controller")
+root.title("Dual Stepper Motor Controller")
 
 # Create and place widgets
 steps_label = tk.Label(root, text="Control:")
@@ -44,8 +50,11 @@ forward_button.grid(row=1, column=0)
 backward_button = tk.Button(root, text="Backward", command=move_backward)
 backward_button.grid(row=1, column=1)
 
-status_label = tk.Label(root, text="Send CW for forward, CCW for backward")
-status_label.grid(row=2, columnspan=2)
+stop_button = tk.Button(root, text="Stop", command=stop_motors)
+stop_button.grid(row=1, column=2)
+
+status_label = tk.Label(root, text="Send CW1/CW2 for forward, CCW1/CCW2 for backward, STOP1/STOP2 to stop")
+status_label.grid(row=2, columnspan=3)
 
 # Run the main event loop
 root.mainloop()
