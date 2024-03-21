@@ -40,26 +40,6 @@ def move_right():
     send_command("CCW1")
     send_command("CCW2")
 
-# Function to move stepper motors diagonally UP-LEFT
-def move_up_left():
-    send_command("CCW1")
-    send_command("STOP2")
-
-# Function to move stepper motors diagonally UP-RIGHT
-def move_up_right():
-    send_command("STOP1")
-    send_command("CW2")
-
-# Function to move stepper motors diagonally DOWN-LEFT
-def move_down_left():
-    send_command("CW1")
-    send_command("STOP2")
-
-# Function to move stepper motors diagonally DOWN-RIGHT
-def move_down_right():
-    send_command("STOP1")
-    send_command("CCW2")
-
 # Function to stop stepper motors
 def stop_motors():
     send_command("STOP")
@@ -70,16 +50,10 @@ root.title("Dual Stepper Motor Controller")
 
 # Create and place widgets
 steps_label = tk.Label(root, text="Control:")
-steps_label.grid(row=0, column=0, columnspan=3)
+steps_label.grid(row=0, column=0, columnspan=2)
 
 up_button = tk.Button(root, text="Up", command=move_up)
 up_button.grid(row=1, column=1)
-
-up_left_button = tk.Button(root, text="Up-Left", command=move_up_left)
-up_left_button.grid(row=1, column=0)
-
-up_right_button = tk.Button(root, text="Up-Right", command=move_up_right)
-up_right_button.grid(row=1, column=2)
 
 left_button = tk.Button(root, text="Left", command=move_left)
 left_button.grid(row=2, column=0)
@@ -92,12 +66,6 @@ right_button.grid(row=2, column=2)
 
 down_button = tk.Button(root, text="Down", command=move_down)
 down_button.grid(row=3, column=1)
-
-down_left_button = tk.Button(root, text="Down-Left", command=move_down_left)
-down_left_button.grid(row=3, column=0)
-
-down_right_button = tk.Button(root, text="Down-Right", command=move_down_right)
-down_right_button.grid(row=3, column=2)
 
 status_label = tk.Label(root, text="Use the buttons to move the stepper motors")
 status_label.grid(row=4, column=0, columnspan=3)
