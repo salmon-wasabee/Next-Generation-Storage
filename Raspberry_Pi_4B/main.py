@@ -16,25 +16,23 @@ def send_command(command):
 
 # Function to move stepper motors forward (clockwise)
 def move_forward():
-    send_command("CW1")  # Command for the first motor
-    send_command("CW2")  # Command for the second motor
+    send_command("CW")  # Corrected command for clockwise rotation
 
 # Function to move stepper motors backward (counter-clockwise)
 def move_backward():
-    send_command("CCW1")  # Command for the first motor
-    send_command("CCW2")  # Command for the second motor
+    send_command("CCW")  # Corrected command for counter-clockwise rotation
 
 # Function to stop stepper motors
 def stop_motors():
-    send_command("STOP1")  # Command to stop the first motor
-    send_command("STOP2")  # Command to stop the second motor
+    send_command("STOP")  # Corrected command to stop the motors
 
 # Initialize serial connection
 try:
     ser = serial.Serial(SERIAL_PORT, BAUD_RATE)
-except serial.SerialException:
+except serial.serialutil.SerialException:
     print("Serial port not available")
     exit()
+
 
 # Create main window
 root = tk.Tk()
