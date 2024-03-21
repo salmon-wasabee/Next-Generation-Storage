@@ -1,0 +1,47 @@
+#include <AccelStepper.h>
+
+// Define stepper motor connections and create AccelStepper objects
+#define dirPin1 12
+#define stepPin1 13
+#define enablePin1 11
+#define dirPin2 9
+#define stepPin2 10
+#define enablePin2 8
+AccelStepper stepper1(1, stepPin1, dirPin1);
+AccelStepper stepper2(1, stepPin2, dirPin2);
+
+void setup() {
+  Serial.begin(115200); // Increased baud rate for faster communication
+  pinMode(enablePin1, OUTPUT);
+  pinMode(enablePin2, OUTPUT);
+  digitalWrite(enablePin1, LOW);
+  digitalWrite(enablePin2, LOW);
+  stepper1.setMaxSpeed(6400);
+  stepper1.setAcceleration(2100);
+  stepper2.setMaxSpeed(6400);
+  stepper2.setAcceleration(2100);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW1") {
+      digitalWrite(enablePin1, LOW);
+      stepper1.moveTo(stepper1.currentPosition() + 6400); // Non-blocking call
+    } else if (input == "CCW1") {
+      digitalWrite(enablePin1, LOW);
+      stepper1.moveTo(stepper1.currentPosition() - 6400); // Non-blocking call
+    } else if (input == "CW2") {
+      digitalWrite(enablePin2, LOW);
+      stepper2.moveTo(stepper2.currentPosition() + 6400); // Non-blocking call
+    } else if (input == "CCW2") {
+      digitalWrite(enablePin2, LOW);
+      stepper2.moveTo(stepper2.currentPosition() - 6400); // Non-blocking call
+    } else if (input == "STOP") {
+      digitalWrite(enablePin1, HIGH);
+      digitalWrite(enablePin2, HIGH);
+    }
+  }
+  stepper1.run();
+  stepper2.run();
+}
