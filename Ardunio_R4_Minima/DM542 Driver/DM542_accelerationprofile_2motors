@@ -1,0 +1,62 @@
+#include <AccelStepper.h>
+
+// Define stepper motor connections for the first motor:
+#define dirPin1 12
+#define stepPin1 13
+#define enablePin1 11 // Define the pin used for the ENABLE function
+
+// Define stepper motor connections for the second motor:
+#define dirPin2 9
+#define stepPin2 10
+#define enablePin2 8 // Define the pin used for the ENABLE function of the second motor
+
+// Define the AccelStepper interface type; 1 is for driver.
+AccelStepper stepper1(1, stepPin1, dirPin1);
+AccelStepper stepper2(1, stepPin2, dirPin2); // Create a second stepper object
+
+void setup() {
+  Serial.begin(9600); // Start serial communication at 9600 baud rate
+  
+  // Set the enable pins as outputs:
+  pinMode(enablePin1, OUTPUT);
+  pinMode(enablePin2, OUTPUT);
+
+  // Enable the drivers (active LOW or HIGH depending on your driver's requirements)
+  digitalWrite(enablePin1, LOW);
+  digitalWrite(enablePin2, LOW);
+
+  // Set the maximum speed and acceleration for both steppers:
+  stepper1.setMaxSpeed(6400); // Adjust to your motor's specifications
+  stepper1.setAcceleration(2100); // Adjust to your desired acceleration
+  stepper2.setMaxSpeed(6400); // Adjust to your motor's specifications
+  stepper2.setAcceleration(2100); // Adjust to your desired acceleration
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW") { // Clockwise rotation
+      // Ensure the drivers are enabled
+      digitalWrite(enablePin1, LOW);
+      digitalWrite(enablePin2, LOW);
+      // Move both steppers
+      stepper1.move(6400); // Adjusted for 32 microsteps (half a revolution)
+      stepper2.move(6400); // Adjusted for 32 microsteps (half a revolution)
+    } else if (input == "CCW") { // Counter-clockwise rotation
+      // Ensure the drivers are enabled
+      digitalWrite(enablePin1, LOW);
+      digitalWrite(enablePin2, LOW);
+      // Move both steppers
+      stepper1.move(-6400); // Adjusted for 32 microsteps (half a revolution)
+      stepper2.move(-6400); // Adjusted for 32 microsteps (half a revolution)
+    } else if (input == "STOP") { // Example command to disable the motors
+      // Disable the drivers (if active LOW, otherwise set to LOW to disable)
+      digitalWrite(enablePin1, HIGH);
+      digitalWrite(enablePin2, HIGH);
+    }
+  }
+
+  // Perform the steps that have been set by the move() calls above
+  stepper1.run();
+  stepper2.run();
+}
