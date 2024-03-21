@@ -42,13 +42,13 @@ def move_right():
 
 # Function to move stepper motors diagonally UP-LEFT
 def move_up_left():
-    send_command("CCW1")
-    send_command("STOP2")
+    send_command("STOP1")
+    send_command("CW2")
 
 # Function to move stepper motors diagonally UP-RIGHT
 def move_up_right():
-    send_command("STOP1")
-    send_command("CW2")
+    send_command("CCW1")
+    send_command("STOP2")
 
 # Function to move stepper motors diagonally DOWN-LEFT
 def move_down_left():
