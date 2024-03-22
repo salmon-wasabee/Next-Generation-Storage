@@ -62,8 +62,7 @@ def move_down_right():
 
 # Function to stop stepper motors
 def stop_motors():
-    send_command("STOP1")
-    send_command("STOP2")
+    send_command("STOP")
 
 # Create main window
 root = tk.Tk()

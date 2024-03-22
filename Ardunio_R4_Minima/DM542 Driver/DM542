@@ -1,0 +1,66 @@
+#include <AccelStepper.h>
+
+// Define stepper motor connections and create AccelStepper objects
+#define dirPin1 12
+#define stepPin1 13
+#define enablePin1 11
+#define dirPin2 9
+#define stepPin2 10
+#define enablePin2 8
+
+AccelStepper stepper1(1, stepPin1, dirPin1);
+AccelStepper stepper2(1, stepPin2, dirPin2);
+
+void setup() {
+  Serial.begin(115200); // Increased baud rate for faster communication
+  pinMode(enablePin1, OUTPUT);
+  pinMode(enablePin2, OUTPUT);
+  digitalWrite(enablePin1, LOW);
+  digitalWrite(enablePin2, LOW);
+  stepper1.setMaxSpeed(25000);
+  stepper1.setAcceleration(10000);
+  stepper2.setMaxSpeed(25000);
+  stepper2.setAcceleration(10000);
+}
+
+void loop() {
+  static bool moving1 = false;
+  static bool moving2 = false;
+  
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW1") {
+      moving1 = true;
+      digitalWrite(enablePin1, LOW);
+      stepper1.move(25000); // Set the target position
+    } else if (input == "CCW1") {
+      moving1 = true;
+      digitalWrite(enablePin1, LOW);
+      stepper1.move(-25000); // Set the target position
+    } else if (input == "CW2") {
+      moving2 = true;
+      digitalWrite(enablePin2, LOW);
+      stepper2.move(25000); // Set the target position
+    } else if (input == "CCW2") {
+      moving2 = true;
+      digitalWrite(enablePin2, LOW);
+      stepper2.move(-25000); // Set the target position
+    } else if (input == "STOP1") {
+      moving1 = false;
+      stepper1.setCurrentPosition(stepper1.currentPosition()); // Set the target position to the current position
+      stepper1.runToPosition(); // Decelerate to stop
+    } else if (input == "STOP2") {
+      moving2 = false;
+      stepper2.setCurrentPosition(stepper2.currentPosition()); // Set the target position to the current position
+      stepper2.runToPosition(); // Decelerate to stop
+    }
+  }
+  
+  if (moving1) {
+    stepper1.runToPosition(); // Blocks until the motor reaches the target position
+  }
+  
+  if (moving2) {
+    stepper2.runToPosition(); // Blocks until the motor reaches the target position
+  }
+}
