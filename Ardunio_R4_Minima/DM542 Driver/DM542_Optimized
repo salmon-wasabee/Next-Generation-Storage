@@ -7,6 +7,10 @@
 #define dirPin2 9
 #define stepPin2 10
 #define enablePin2 8
+
+// Define the number of microsteps per revolution
+#define MICROSTEPS_PER_REV 25000
+
 AccelStepper stepper1(1, stepPin1, dirPin1);
 AccelStepper stepper2(1, stepPin2, dirPin2);
 
@@ -16,10 +20,12 @@ void setup() {
   pinMode(enablePin2, OUTPUT);
   digitalWrite(enablePin1, LOW);
   digitalWrite(enablePin2, LOW);
-  stepper1.setMaxSpeed(6400);
-  stepper1.setAcceleration(2100);
-  stepper2.setMaxSpeed(6400);
-  stepper2.setAcceleration(2100);
+  
+  // Set the maximum speed and acceleration
+  stepper1.setMaxSpeed(10000); // Adjust this value based on your motor's specifications
+  stepper1.setAcceleration(5000); // Adjust this value to find the fastest acceleration that doesn't cause the motor to stall
+  stepper2.setMaxSpeed(10000); // Same for the second motor
+  stepper2.setAcceleration(5000); // And its acceleration
 }
 
 void loop() {
@@ -27,16 +33,16 @@ void loop() {
     String input = Serial.readStringUntil('\n');
     if (input == "CW1") {
       digitalWrite(enablePin1, LOW);
-      stepper1.moveTo(stepper1.currentPosition() + 6400); // Non-blocking call
+      stepper1.move(MICROSTEPS_PER_REV); // Non-blocking call
     } else if (input == "CCW1") {
       digitalWrite(enablePin1, LOW);
-      stepper1.moveTo(stepper1.currentPosition() - 6400); // Non-blocking call
+      stepper1.move(-MICROSTEPS_PER_REV); // Non-blocking call
     } else if (input == "CW2") {
       digitalWrite(enablePin2, LOW);
-      stepper2.moveTo(stepper2.currentPosition() + 6400); // Non-blocking call
+      stepper2.move(MICROSTEPS_PER_REV); // Non-blocking call
     } else if (input == "CCW2") {
       digitalWrite(enablePin2, LOW);
-      stepper2.moveTo(stepper2.currentPosition() - 6400); // Non-blocking call
+      stepper2.move(-MICROSTEPS_PER_REV); // Non-blocking call
     } else if (input == "STOP") {
       digitalWrite(enablePin1, HIGH);
       digitalWrite(enablePin2, HIGH);

@@ -5,7 +5,7 @@ import serial
 
 # Serial port configuration
 SERIAL_PORT = '/dev/serial/by-id/usb-Arduino_UNO_R4_Minima_38101818373233355BD333324B572D3A-if00'  # Update this to the correct port
-BAUD_RATE = 9600
+BAUD_RATE = 115200
 
 # Initialize serial connection
 try:
