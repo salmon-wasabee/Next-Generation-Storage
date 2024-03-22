@@ -24,43 +24,28 @@ void setup() {
 }
 
 void loop() {
-  static bool moving1 = false;
-  static bool moving2 = false;
-  
   if (Serial.available() > 0) {
     String input = Serial.readStringUntil('\n');
     if (input == "CW1") {
-      moving1 = true;
       digitalWrite(enablePin1, LOW);
       stepper1.move(25000); // Set the target position
     } else if (input == "CCW1") {
-      moving1 = true;
       digitalWrite(enablePin1, LOW);
       stepper1.move(-25000); // Set the target position
     } else if (input == "CW2") {
-      moving2 = true;
       digitalWrite(enablePin2, LOW);
       stepper2.move(25000); // Set the target position
     } else if (input == "CCW2") {
-      moving2 = true;
       digitalWrite(enablePin2, LOW);
       stepper2.move(-25000); // Set the target position
     } else if (input == "STOP1") {
-      moving1 = false;
-      stepper1.setCurrentPosition(stepper1.currentPosition()); // Set the target position to the current position
-      stepper1.runToPosition(); // Decelerate to stop
+      stepper1.stop(); // Stop as soon as possible: sets new target
     } else if (input == "STOP2") {
-      moving2 = false;
-      stepper2.setCurrentPosition(stepper2.currentPosition()); // Set the target position to the current position
-      stepper2.runToPosition(); // Decelerate to stop
+      stepper2.stop(); // Stop as soon as possible: sets new target
     }
   }
   
-  if (moving1) {
-    stepper1.runToPosition(); // Blocks until the motor reaches the target position
-  }
-  
-  if (moving2) {
-    stepper2.runToPosition(); // Blocks until the motor reaches the target position
-  }
+  // Non-blocking calls to run the motors
+  stepper1.run();
+  stepper2.run();
 }
