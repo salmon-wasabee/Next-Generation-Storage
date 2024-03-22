@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import tkinter as tk
 import serial
 
@@ -20,48 +18,12 @@ def send_command(command):
     ser.write(command_with_newline.encode())
     status_label.config(text=f"Command sent: {command}")
 
-# Function to move stepper motors in the UP direction
-def move_up():
-    send_command("CCW1")
-    send_command("CW2")
+# Function to handle button press and release events for all directions
+def on_button_press(*commands):
+    for command in commands:
+        send_command(command)
 
-# Function to move stepper motors in the DOWN direction
-def move_down():
-    send_command("CW1")
-    send_command("CCW2")
-
-# Function to move stepper motors in the LEFT direction
-def move_left():
-    send_command("CW1")
-    send_command("CW2")
-
-# Function to move stepper motors in the RIGHT direction
-def move_right():
-    send_command("CCW1")
-    send_command("CCW2")
-
-# Function to move stepper motors diagonally UP-LEFT
-def move_up_left():
-    send_command("STOP1")
-    send_command("CW2")
-
-# Function to move stepper motors diagonally UP-RIGHT
-def move_up_right():
-    send_command("CCW1")
-    send_command("STOP2")
-
-# Function to move stepper motors diagonally DOWN-LEFT
-def move_down_left():
-    send_command("CW1")
-    send_command("STOP2")
-
-# Function to move stepper motors diagonally DOWN-RIGHT
-def move_down_right():
-    send_command("STOP1")
-    send_command("CCW2")
-
-# Function to stop stepper motors
-def stop_motors():
+def on_button_release(event):
     send_command("STOP1")
     send_command("STOP2")
 
@@ -73,34 +35,49 @@ root.title("Dual Stepper Motor Controller")
 steps_label = tk.Label(root, text="Control:")
 steps_label.grid(row=0, column=0, columnspan=3)
 
-up_button = tk.Button(root, text="Up", command=move_up)
+# Create buttons with press and release event bindings for all directions
+up_button = tk.Button(root, text="Up")
+up_button.bind('<ButtonPress>', lambda event: on_button_press("CCW1", "CW2"))
+up_button.bind('<ButtonRelease>', on_button_release)
 up_button.grid(row=1, column=1)
 
-up_left_button = tk.Button(root, text="Up-Left", command=move_up_left)
-up_left_button.grid(row=1, column=0)
-
-up_right_button = tk.Button(root, text="Up-Right", command=move_up_right)
-up_right_button.grid(row=1, column=2)
-
-left_button = tk.Button(root, text="Left", command=move_left)
-left_button.grid(row=2, column=0)
-
-stop_button = tk.Button(root, text="Stop", command=stop_motors)
-stop_button.grid(row=2, column=1)
-
-right_button = tk.Button(root, text="Right", command=move_right)
-right_button.grid(row=2, column=2)
-
-down_button = tk.Button(root, text="Down", command=move_down)
+down_button = tk.Button(root, text="Down")
+down_button.bind('<ButtonPress>', lambda event: on_button_press("CW1", "CCW2"))
+down_button.bind('<ButtonRelease>', on_button_release)
 down_button.grid(row=3, column=1)
 
-down_left_button = tk.Button(root, text="Down-Left", command=move_down_left)
+left_button = tk.Button(root, text="Left")
+left_button.bind('<ButtonPress>', lambda event: on_button_press("CW1", "CW2"))
+left_button.bind('<ButtonRelease>', on_button_release)
+left_button.grid(row=2, column=0)
+
+right_button = tk.Button(root, text="Right")
+right_button.bind('<ButtonPress>', lambda event: on_button_press("CCW1", "CCW2"))
+right_button.bind('<ButtonRelease>', on_button_release)
+right_button.grid(row=2, column=2)
+
+# Diagonal direction buttons
+up_left_button = tk.Button(root, text="Up-Left")
+up_left_button.bind('<ButtonPress>', lambda event: on_button_press("STOP1", "CW2"))
+up_left_button.bind('<ButtonRelease>', on_button_release)
+up_left_button.grid(row=1, column=0)
+
+up_right_button = tk.Button(root, text="Up-Right")
+up_right_button.bind('<ButtonPress>', lambda event: on_button_press("CCW1", "STOP2"))
+up_right_button.bind('<ButtonRelease>', on_button_release)
+up_right_button.grid(row=1, column=2)
+
+down_left_button = tk.Button(root, text="Down-Left")
+down_left_button.bind('<ButtonPress>', lambda event: on_button_press("CW1", "STOP2"))
+down_left_button.bind('<ButtonRelease>', on_button_release)
 down_left_button.grid(row=3, column=0)
 
-down_right_button = tk.Button(root, text="Down-Right", command=move_down_right)
+down_right_button = tk.Button(root, text="Down-Right")
+down_right_button.bind('<ButtonPress>', lambda event: on_button_press("STOP1", "CCW2"))
+down_right_button.bind('<ButtonRelease>', on_button_release)
 down_right_button.grid(row=3, column=2)
 
-status_label = tk.Label(root, text="Use the buttons to move the stepper motors")
+status_label = tk.Label(root, text="Press and hold the buttons to move the stepper motors")
 status_label.grid(row=4, column=0, columnspan=3)
 
 # Run the main event loop
