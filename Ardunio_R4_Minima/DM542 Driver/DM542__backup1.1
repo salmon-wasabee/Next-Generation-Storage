@@ -1,0 +1,51 @@
+#include <AccelStepper.h>
+
+// Define stepper motor connections and create AccelStepper objects
+#define dirPin1 12
+#define stepPin1 13
+#define enablePin1 11
+#define dirPin2 9
+#define stepPin2 10
+#define enablePin2 8
+
+AccelStepper stepper1(1, stepPin1, dirPin1);
+AccelStepper stepper2(1, stepPin2, dirPin2);
+
+void setup() {
+  Serial.begin(115200); // Increased baud rate for faster communication
+  pinMode(enablePin1, OUTPUT);
+  pinMode(enablePin2, OUTPUT);
+  digitalWrite(enablePin1, LOW);
+  digitalWrite(enablePin2, LOW);
+  stepper1.setMaxSpeed(25000);
+  stepper1.setAcceleration(10000);
+  stepper2.setMaxSpeed(25000);
+  stepper2.setAcceleration(10000);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    if (input == "CW1") {
+      digitalWrite(enablePin1, LOW);
+      stepper1.setSpeed(25000); // Set the speed
+    } else if (input == "CCW1") {
+      digitalWrite(enablePin1, LOW);
+      stepper1.setSpeed(-25000); // Set the speed
+    } else if (input == "CW2") {
+      digitalWrite(enablePin2, LOW);
+      stepper2.setSpeed(25000); // Set the speed
+    } else if (input == "CCW2") {
+      digitalWrite(enablePin2, LOW);
+      stepper2.setSpeed(-25000); // Set the speed
+    } else if (input == "STOP1") {
+      stepper1.setSpeed(0); // Stop the motor
+    } else if (input == "STOP2") {
+      stepper2.setSpeed(0); // Stop the motor
+    }
+  }
+  
+  // Non-blocking calls to run the motors at the set speed
+  stepper1.runSpeed();
+  stepper2.runSpeed();
+}

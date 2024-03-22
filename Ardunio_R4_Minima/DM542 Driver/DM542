@@ -11,41 +11,85 @@
 AccelStepper stepper1(1, stepPin1, dirPin1);
 AccelStepper stepper2(1, stepPin2, dirPin2);
 
+
+// Define the acceleration rate
+#define ACCELERATION_RATE 20000
+#define MAXSPEED 25000
+
+
 void setup() {
   Serial.begin(115200); // Increased baud rate for faster communication
   pinMode(enablePin1, OUTPUT);
   pinMode(enablePin2, OUTPUT);
   digitalWrite(enablePin1, LOW);
   digitalWrite(enablePin2, LOW);
-  stepper1.setMaxSpeed(25000);
-  stepper1.setAcceleration(10000);
-  stepper2.setMaxSpeed(25000);
-  stepper2.setAcceleration(10000);
+  stepper1.setMaxSpeed(MAXSPEED);
+  stepper1.setAcceleration(ACCELERATION_RATE);
+  stepper2.setMaxSpeed(MAXSPEED);
+  stepper2.setAcceleration(ACCELERATION_RATE);
 }
 
 void loop() {
+  static unsigned long lastStepTime1 = 0;
+  static unsigned long lastStepTime2 = 0;
+  static bool isCW1Active = false;
+  static bool isCCW1Active = false;
+  static bool isCW2Active = false;
+  static bool isCCW2Active = false;
+
   if (Serial.available() > 0) {
     String input = Serial.readStringUntil('\n');
+    unsigned long currentTime = millis();
+
+    // CW1 command
     if (input == "CW1") {
       digitalWrite(enablePin1, LOW);
-      stepper1.move(25000); // Set the target position
+      isCW1Active = true;
+      lastStepTime1 = currentTime;
     } else if (input == "CCW1") {
       digitalWrite(enablePin1, LOW);
-      stepper1.move(-25000); // Set the target position
+      isCCW1Active = true;
+      lastStepTime1 = currentTime;
     } else if (input == "CW2") {
       digitalWrite(enablePin2, LOW);
-      stepper2.move(25000); // Set the target position
+      isCW2Active = true;
+      lastStepTime2 = currentTime;
     } else if (input == "CCW2") {
       digitalWrite(enablePin2, LOW);
-      stepper2.move(-25000); // Set the target position
+      isCCW2Active = true;
+      lastStepTime2 = currentTime;
     } else if (input == "STOP1") {
-      stepper1.stop(); // Stop as soon as possible: sets new target
+      stepper1.setSpeed(0); // Stop the motor
+      isCW1Active = false;
+      isCCW1Active = false;
     } else if (input == "STOP2") {
-      stepper2.stop(); // Stop as soon as possible: sets new target
+      stepper2.setSpeed(0); // Stop the motor
+      isCW2Active = false;
+      isCCW2Active = false;
     }
   }
-  
-  // Non-blocking calls to run the motors
-  stepper1.run();
-  stepper2.run();
+
+  // Accelerate or decelerate stepper1
+  if (isCW1Active || isCCW1Active) {
+    unsigned long elapsedTime1 = millis() - lastStepTime1;
+    float newSpeed1 = (elapsedTime1 / 5000.0) * MAXSPEED;
+    if (isCCW1Active) {
+      newSpeed1 = -newSpeed1;
+    }
+    stepper1.setSpeed(newSpeed1);
+  }
+
+  // Accelerate or decelerate stepper2
+  if (isCW2Active || isCCW2Active) {
+    unsigned long elapsedTime2 = millis() - lastStepTime2;
+    float newSpeed2 = (elapsedTime2 / 5000.0) * MAXSPEED;
+    if (isCCW2Active) {
+      newSpeed2 = -newSpeed2;
+    }
+    stepper2.setSpeed(newSpeed2);
+  }
+
+  // Non-blocking calls to run the motors at the set speed
+  stepper1.runSpeed();
+  stepper2.runSpeed();
 }
