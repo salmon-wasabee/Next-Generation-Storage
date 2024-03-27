@@ -43,6 +43,17 @@ def read_rfid_and_update_status():
 # Create main window
 root = tk.Tk()
 root.title("Dual Stepper Motor Controller")
+entry_widget = tk.Entry(root)
+entry_widget.pack()
+
+# Assuming the RFID reader reads the value "0007677391" and stores it in the variable rfid_value
+rfid_value = "0007677391"
+
+# Call the read_rfid function with the RFID value and the Entry widget
+is_valid = read_rfid(rfid_value, entry_widget)
+
+# Print the result
+print(f"The RFID card with value {rfid_value} is valid: {is_valid}")
 
 # Create and place widgets
 steps_label = tk.Label(root, text="Control:")
