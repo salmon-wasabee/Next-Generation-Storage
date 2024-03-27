@@ -64,7 +64,7 @@ rfid_entry = tk.Entry(root)
 rfid_entry.grid(row=5, column=0)
 
 # Add a button to read RFID
-read_rfid_button = tk.Button(root, text="Read RFID", command=read_rfid_and_update_status)
+read_rfid_button = tk.Button(root, text="Read RFID", command=lambda: read_rfid(rfid_entry.get(), entry_widget))
 read_rfid_button.grid(row=5, column=1)
 
 
