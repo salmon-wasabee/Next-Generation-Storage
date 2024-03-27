@@ -1,6 +1,7 @@
 import tkinter as tk
 import serial
 from RFID import read_rfid  # Import the read_rfid function from RFID.py
+import time
 
 # Serial port configuration
 SERIAL_PORT = '/dev/serial/by-id/usb-Arduino_UNO_R4_Minima_38101818373233355BD333324B572D3A-if00'  # Update this to the correct port
@@ -28,32 +29,31 @@ def on_button_release(event):
     send_command("STOP1")
     send_command("STOP2")
     
-# Function to read RFID from the Entry widget and update status
-def read_rfid_and_update_status():
-    try:
-        # Get the RFID value from the Entry widget
-        rfid_value = rfid_entry.get()
-        is_valid = read_rfid(rfid_value)
-        status_label.config(text=f"RFID valid: {is_valid}")
-    except Exception as e:
-        status_label.config(text=f"Error reading RFID: {e}")
+def read_rfid_loop():
+    # Assuming the RFID reader reads the value "0007677391" and stores it in the variable rfid_value
+    rfid_value = "0007677391"
+
+    # Call the read_rfid function with the RFID value and the Entry widget
+    is_valid = read_rfid(rfid_value, entry_widget)
+
+    # Print the result
+    print(f"The RFID card with value {rfid_value} is valid: {is_valid}")
+
+    # Schedule the read_rfid_loop function to be called again after 1 second (1000 milliseconds)
+    root.after(1000, read_rfid_loop)
 
 
 
 # Create main window
 root = tk.Tk()
 root.title("Dual Stepper Motor Controller")
+
 entry_widget = tk.Entry(root)
 entry_widget.grid(row=0, column=0)  # Use grid instead of pack
 
-# Assuming the RFID reader reads the value "0007677391" and stores it in the variable rfid_value
-rfid_value = "0007677391"
 
-# Call the read_rfid function with the RFID value and the Entry widget
-is_valid = read_rfid(rfid_value, entry_widget)
-
-# Print the result
-print(f"The RFID card with value {rfid_value} is valid: {is_valid}")
+# Schedule the read_rfid_loop function to be called after 1 second (1000 milliseconds)
+root.after(1000, read_rfid_loop)
 
 # Create and place widgets
 steps_label = tk.Label(root, text="Control:")
