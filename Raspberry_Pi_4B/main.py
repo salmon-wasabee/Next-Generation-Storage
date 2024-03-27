@@ -30,10 +30,14 @@ def on_button_release(event):
     
 # Function to read RFID and update status
 def read_rfid_and_update_status():
-    # Assuming ser.readline() is the way you read from the serial port connected to the RFID reader
-    rfid_value = ser.readline().decode().strip()
-    is_valid = read_rfid(rfid_value)
-    status_label.config(text=f"RFID valid: {is_valid}")
+    try:
+        # Assuming ser.readline() is the way you read from the serial port connected to the RFID reader
+        rfid_value = ser.readline().decode().strip()
+        is_valid = read_rfid(rfid_value)
+        status_label.config(text=f"RFID valid: {is_valid}")
+    except Exception as e:
+        status_label.config(text=f"Error reading RFID: {e}")
+
 
 
 # Create main window
