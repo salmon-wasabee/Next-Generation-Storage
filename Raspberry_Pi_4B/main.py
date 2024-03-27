@@ -28,11 +28,11 @@ def on_button_release(event):
     send_command("STOP1")
     send_command("STOP2")
     
-# Function to read RFID and update status
+# Function to read RFID from the Entry widget and update status
 def read_rfid_and_update_status():
     try:
-        # Assuming ser.readline() is the way you read from the serial port connected to the RFID reader
-        rfid_value = ser.readline().decode().strip()
+        # Get the RFID value from the Entry widget
+        rfid_value = rfid_entry.get()
         is_valid = read_rfid(rfid_value)
         status_label.config(text=f"RFID valid: {is_valid}")
     except Exception as e:
@@ -47,6 +47,10 @@ root.title("Dual Stepper Motor Controller")
 # Create and place widgets
 steps_label = tk.Label(root, text="Control:")
 steps_label.grid(row=0, column=0, columnspan=3)
+
+# Entry widget for RFID input
+rfid_entry = tk.Entry(root)
+rfid_entry.grid(row=5, column=0)
 
 # Add a button to read RFID
 read_rfid_button = tk.Button(root, text="Read RFID", command=read_rfid_and_update_status)
