@@ -1,12 +1,6 @@
 # RFID.py
 import tkinter as tk
 
-# Initialize the Entry widget
-entry_widget = tk.Entry(root)
-entry_widget.pack()
-
-
-
 def read_rfid(input_value, text_widget):
     # The expected RFID value
     expected_value = "0007677391"
